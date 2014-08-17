@@ -135,6 +135,16 @@ class Database(dbfeed.Database):
         cursor.close()
         return ret
 
+    def get_last_timestamp(self, instrument):
+        sql = "select max(bar.timestamp) from bar join instrument on (bar.instrument_id = instrument.instrument_id) where instrument.name = ?"
+        cursor = self.__connection.cursor()
+        cursor.execute(sql, (instrument,))
+        last_timestamp = None
+        row = cursor.fetchone()
+        last_timestamp = row[0]
+        cursor.close()
+        return last_timestamp
+
     def disconnect(self):
         self.__connection.close()
         self.__connection = None
